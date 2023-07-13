@@ -1,0 +1,3 @@
+
+rootProject.name = "kreact-service"
+
