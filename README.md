@@ -1,7 +1,4 @@
 # KReact
-This library provides a Redux-like implementation in pure Kotlin and coroutines.
-
-# Include
 ## Gradle
 ```kotlin
 dependecies {
