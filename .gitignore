@@ -116,9 +116,6 @@ build/
 # Ignore Gradle GUI config
 gradle-app.setting
 
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
 # Cache of project
 .gradletasknamecache
 
@@ -302,5 +299,8 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,linux,intellij,visualstudiocode,eclipse,kotlin,java
