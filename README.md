@@ -251,7 +251,7 @@ data class ServiceState(
     val apiCall: ApplicationCall
 ): State {
     suspend fun <T : Any?> apiCallScope(scope: suspend ApplicationCall.() -> T?): T? {
-        return withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) { // Dispatcher here can be whatever I just chose IO as an example
             scope(apiCall)
         }
     }
