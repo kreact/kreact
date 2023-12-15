@@ -1,6 +1,5 @@
 # KReact
 [![Build and Test](https://github.com/kreact/kreact/actions/workflows/build-and-test.yml/badge.svg?branch=main)](https://github.com/kreact/kreact/actions/workflows/build-and-test.yml)
-
 ## Gradle
 ```kotlin
 dependecies {
