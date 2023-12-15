@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version DependencyVersions.Kotlin.VERSION
+    `maven-publish`
 }
 
 group = JarMetadata.GROUP
@@ -17,6 +18,24 @@ tasks.withType<KotlinCompile> {
 
 repositories {
     mavenCentral()
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kreact/kreact")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("GPR_USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GPR_TOKEN")
+            }
+        }
+    }
+    publications {
+        register<MavenPublication>("gpr") {
+            from(components["java"])
+        }
+    }
 }
 
 dependencies {
