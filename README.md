@@ -33,6 +33,20 @@ examples.
 ## Use
 ### Gradle
 ```kotlin
+repositories {
+    mavenCentral()
+    ...
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/kreact/kreact")
+        credentials {
+            username = project.findProperty("gpr.user") as String?
+            password = project.findProperty("gpr.key") as String?
+        }
+    }
+    ...
+}
+
 dependecies {
     implementation("org.kreact.kreact:1.0.0")
 }
