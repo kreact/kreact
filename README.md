@@ -18,14 +18,15 @@ state changes.
 This architecture promotes a clean, maintainable, and scalable codebase, ideal for complex applications requiring a 
 structured approach to state management, while simplifying testing and improving the testing surface.
 
-## Gradle
+## Use
+### Gradle
 ```kotlin
 dependecies {
     implementation("org.kreact.kreact:1.0.0")
 }
 ```
 
-## Maven
+### Maven
 ```xml
 <dependency>
   <groupId>org.kreact</groupId>
