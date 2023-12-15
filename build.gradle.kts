@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 
 plugins {
     kotlin("jvm") version DependencyVersions.Kotlin.VERSION
@@ -8,12 +8,14 @@ plugins {
 group = JarMetadata.GROUP
 version = JarMetadata.VERSION
 
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = DependencyVersions.Java.VERSION
+kotlin {
+    jvmToolchain {
+        kotlin {
+            jvmToolchain {
+                languageVersion.set(JavaLanguageVersion.of(DependencyVersions.Java.VERSION))
+            }
+        }
+    }
 }
 
 repositories {
@@ -36,6 +38,10 @@ publishing {
             from(components["java"])
         }
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 dependencies {
