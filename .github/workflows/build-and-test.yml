@@ -16,9 +16,9 @@ jobs:
         with:
           java-version: 17
           distribution: 'adopt'
-      - uses: gradle/gradle-build-action@v3
+      - uses: gradle/gradle-build-action@v2.11.0
         with:
           arguments: build --scan
-      - uses: gradle/gradle-build-action@v3
+      - uses: gradle/gradle-build-action@v2.11.0
         with:
           arguments: test --scan
