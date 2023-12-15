@@ -20,107 +20,91 @@ dependecies {
 # Use 
 This library can be used in a variety of applications in both clients and servers that use Kotlin.
 
-## General
+## Quick Start
 You are required to set up a set of components for any use case. These are:
-* Actions -> `org.kreact.core.Action`
-* Side effects -> `org.kreact.core.SideEffect`
-* State -> `org.kreact.core.State`
-* Reducer functions -> `org.kreact.core.Reducer.ReducerFunctionType`
+* Action: Represents an operation to change the state.
+* State: Represents the application state.
+* SideEffect: Represents a side effect operation after mutating the state like logging, database interactions etc.
+* ActionDispatcher: Dispatches actions to change the state.
+* Reducer: Processes actions to produce a new state.
+* StateProvider: Provides a flow of states and side effects.
 
 The components can be as complex or as simple as you want them to be.
 
-Below is a basic example for each:
+Here is a simple example to get started quickly:
 
-### Action
+### Define your components
+#### Step 1: Define State, Actions & Side Effects
 ```kotlin
-sealed class MyAction: Action {
-    object Start: MyAction()
-    object Stop: MyAction()
+// Define your application state
+class AppState(val counter: Int = 0) : State
+
+// Define actions that can change the state
+class IncrementAction : Action
+class DecrementAction : Action
+
+// Define any side effects (e.g., logging)
+class LogSideEffect(val message: String) : SideEffect
+```
+#### Step 2: Define Reducer Functions
+```kotlin
+// Reducer function to handle actions
+val counterReducer: ReducerFunctionType<Action, AppState, SideEffect> = { action, state, dispatcher ->
+    when (action) {
+        is IncrementAction -> ReducerResult.Mutation(state.copy(counter = state.counter + 1))
+        is DecrementAction -> ReducerResult.Mutation(state.copy(counter = state.counter - 1))
+        else -> ReducerResult.NoMutation()
+    }
 }
 ```
-
-### Side Effect
+#### Step 3: Initialize State Management
+Using the components we defined we can now create our `ActionDispatcher` and `StateProvider`
 ```kotlin
-sealed class MySideEffect: SideEffect
+// Coroutine scope for the reducer (usually a ViewModelScope or similar)
+val scope = CoroutineScope(Dispatchers.Default)
+
+// Initial state of the app
+val initialState = AppState()
+
+// Create the ActionDispatcher and StateProvider
+val (actionDispatcher, stateProvider) = StateProviderFactory.create(
+    scope,
+    initialState,
+    counterReducer
+)
 ```
-
-### State
+#### Step 4: Dispatch Actions and Observe State Changes
 ```kotlin
-data class MyState(val property1: String? = null): State
+// Dispatch actions
+scope.launch {
+    actionDispatcher.dispatch(IncrementAction())
+    actionDispatcher.dispatch(DecrementAction())
+}
+
+// Observe state changes
+stateProvider.stateFlow.collect { state ->
+    println("Current counter value: ${state.counter}")
+}
 ```
-
-### Reducer Function
+#### Step 5: Observe Side Effects (Optional)
 ```kotlin
-typealias MyReducerType = suspend (MyAction, MyState) -> ReducerResult<MyState, MySideEffect>
-
-object MyReducer : MyReducerType {
-    override suspend fun invoke(
-        action: MyAction,
-        state: MyState
-    ): ReducerResult<MyState, MySideEffect> {
-        TODO()
+// Side effect example (e.g., logging)
+stateProvider.sideEffectFlow.collect { sideEffect ->
+    if (sideEffect is LogSideEffect) {
+        println("Log: ${sideEffect.message}")
     }
 }
 ```
 
-You then combine all those components to create a `StateProvider` and `ActionDispatcher` pair using 
-`StateProviderFactory`:
 
-```kotlin
-val coroutineScope = CoroutineScope(Dispatchers.Default + Job())
-val (actionDispatcher, stateProvider) =
-            StateProviderFactory.create(coroutineScope, MyState(), MyReducer)
-```
+## Concrete Examples
+Below are some concrete examples and use cases. I am providing these while I create a better way to showcase examples
+like a dedicated folder and projects.
 
-You can then use the action dispatcher like so:
-```kotlin
-    /**
-     * Dispatches an action to the flow for processing by the reducer.
-     *
-     * @param action The action to dispatch.
-     */
-    suspend fun dispatch(action: A)
-
-    /**
-     * Dispatches an action to the channel for processing and waits for the result from the reducer.
-     *
-     * @param action The action to dispatch with suspension.
-     */
-    suspend fun dispatchAndAwait(action: A)
-```
-
-And once an action is dispatched you can then collect on the state and side effect flows:
-
-```kotlin
-/**
- * An abstract class that provides a flow of states and side effects.
- *
- * @param S The state to provide
- * @param E The possible side effects during state mutation
- *
- * @property stateFlow is a hot stream of [State] values emitted once and only once to its
- * collectors. It has a default initial state value.
- * @property sideEffectFlow is a hot stream of [SideEffect] values emitted once or more times to its
- * collectors, dependent on the replay value during collection, and has no initial value.
- */
-abstract class StateProvider<S : State, E : SideEffect> {
-    abstract val stateFlow: StateFlow<S>
-    abstract val sideEffectFlow: SharedFlow<E>
-}
-
-stateFlow.collect {
-    TODO()
-}
-
-sideEffectFlow.collect {
-    TODO()
-}
-```
-
-## Client - Android
+### Client - Android
 In order for the state to be preserved in mobile you need to integrate the viewmodel of your application with KReact.
 
-### BaseViewModel
+#### Define a ViewModel with KReact
 ```kotlin
 /**
  * Integration of the Android ViewModel allowing for seamless state
@@ -154,9 +138,8 @@ abstract class BaseViewModel<A : Action, S : State, E : SideEffect>(
     }
 }
 ```
-You can now extend from this class:
 
-### ExampleViewModel
+#### Extend the base ViewModel with KReact
 ```kotlin
 /**
  * The ViewModel used in the app.
@@ -175,9 +158,8 @@ class ExampleViewModel(
 ) : BaseViewModel<ExampleAction, ExampleState, ExampleSideEffect>(initialState, *reducerFunctions)
 ```
 
-However, you will need a `ViewModelFactory`:
-
-### ExampleViewModelFactory
+#### Create a ViewModelFactory for the ViewModel
+You will need a `ViewModelFactory` since the ViewModel we defined has constructor parameters.
 ```kotlin
 /**
  * Since the viewmodel has constructor params this class is needed to instruct the Android
@@ -197,8 +179,7 @@ class ExampleViewModelFactory(
 }
 ```
 
-### MainScreen
-Now you can create your viewmodel and it will be seamlessly integrated with KReact.
+#### Use the ViewModel in your composable
 ```kotlin
 @Preview
 @Composable
@@ -230,22 +211,22 @@ fun MainScreen() {
 }
 ```
 
-## Server
+### Server
 To fully harness the power of coroutines use an HTTP server like Ktor that makes full use of coroutines. Other HTTP 
 servers may be viable but are not tested. The library can be used for both stateful and stateless services.
 
-### Stateful Example
+#### Stateful Example
 I will not be providing a stateful example since it is trivial to set up and the General section above should send you
 on the right path. Just ensure that the created `ActionDispatcher` and `StateProvider` pair are accessible to your 
 service class during its lifecycle, including the coroutine scope needed by `StateProviderFactory`.
 
-### Stateless Example
+#### Stateless Example
 For the stateless example I will be using Ktor and utilize its `pipelineContext` to maintain structured concurrency.
 What we want is that for each call made to a URL or endpoint, we initialize a new state, therefore allowing any call 
 made to the service to utilize common state properties, condensing the data needed to process a request into a single 
 source of truth.
 
-### Setup State
+#### Setup State
 ```kotlin
 data class ServiceState(
     val apiCall: ApplicationCall
@@ -259,7 +240,7 @@ data class ServiceState(
 
 ```
 
-### Setup Actions & Side Effects
+#### Setup Actions & Side Effects
 ```kotlin
 sealed class ServiceAction : Action {
     sealed class AuthFlow : PluginServiceAction() {
@@ -278,7 +259,7 @@ sealed class ServiceAction : Action {
 sealed class ServiceSideEffect : SideEffect
 ```
 
-### Setup Reducer
+#### Setup Reducer
 ```kotlin
 private typealias ServiceReducerType =
         suspend (ServiceAction, ServiceState) -> ReducerResult<ServiceState, ServiceSideEffect>
@@ -315,7 +296,7 @@ object ServiceReducer : ServiceReducerType {
 }
 ```
 
-### Create the State
+#### Create the State
 Using the components created above we now are able to create our state using a function like the one below.
 This function uses `pipelineContext.coroutineContext` to create a new coroutine for a call, maintaining structured 
 concurrency. In addition, `pipelineContext.call` is injected into the service state to be used by the reducer later on
@@ -335,7 +316,7 @@ suspend fun initServiceState(
 ```
 Note: By providing an `ActionDispatcher` in the scope we allow further use of the function, in a declarative a fashion.
 
-### Setup Ktor
+#### Setup Ktor
 Now that we can create a state on the fly we can finally integrate with Ktor.
 ```kotlin
 embeddedServer(Netty, host = "0.0.0.0", port = port) {
