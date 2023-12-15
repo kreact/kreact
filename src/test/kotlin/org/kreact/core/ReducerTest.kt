@@ -2,15 +2,17 @@ package org.kreact.core
 
 import io.mockk.coVerify
 import io.mockk.spyk
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.*
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ReducerTest {
 
     private sealed class TestAction : Action {
@@ -59,7 +61,7 @@ class ReducerTest {
         ) {}
 
         object : Reducer<TestAction, TestState, TestSideEffect>(
-            CoroutineScope(testScope.testScheduler),
+            testScope,
             actionDispatcher,
             actionFlow,
             stateFlow,
@@ -67,24 +69,32 @@ class ReducerTest {
             dispatchForResultChannel,
             TestReducerFunction
         ) {}
+        Dispatchers.setMain(StandardTestDispatcher(testScope.testScheduler))
+    }
+
+    @AfterEach
+    fun clean() {
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun `action flow emits state`() = testScope.runTest {
+    fun `action flow emits state`() = runTest {
         val action = TestAction.NewStateAction
         val newState = TestState(changed = true)
 
         actionFlow.emit(action)
+        advanceUntilIdle()
 
         coVerify { stateFlow.emit(newState) }
     }
 
     @Test
-    fun `action flow emits side effect`() = testScope.runTest {
+    fun `action flow emits side effect`() = runTest {
         val action = TestAction.SideEffectAction
         val sideEffect = TestSideEffect
 
         actionFlow.emit(action)
+        advanceUntilIdle()
 
         coVerify { sideEffectFlow.emit(sideEffect) }
     }

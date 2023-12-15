@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-
 plugins {
     kotlin("jvm") version DependencyVersions.Kotlin.VERSION
     `maven-publish`
