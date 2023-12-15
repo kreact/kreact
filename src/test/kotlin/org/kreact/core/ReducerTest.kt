@@ -1,12 +1,12 @@
 package org.kreact.core
 
-import io.mockk.*
-import kotlinx.coroutines.*
+import io.mockk.coVerify
+import io.mockk.spyk
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -45,8 +45,7 @@ class ReducerTest {
             Channel<DispatchForResultChannelItem<TestAction, TestState, TestSideEffect>>
     private lateinit var actionDispatcher: ActionDispatcher<TestAction, TestState, TestSideEffect>
 
-    val testCoroutineScheduler = TestCoroutineScheduler()
-    val testDispatcher = StandardTestDispatcher(testCoroutineScheduler)
+    private val testScope = TestScope()
 
     @BeforeEach
     fun setUp() {
@@ -60,7 +59,7 @@ class ReducerTest {
         ) {}
 
         object : Reducer<TestAction, TestState, TestSideEffect>(
-            CoroutineScope(UnconfinedTestDispatcher(testCoroutineScheduler)),
+            CoroutineScope(testScope.testScheduler),
             actionDispatcher,
             actionFlow,
             stateFlow,
@@ -71,7 +70,7 @@ class ReducerTest {
     }
 
     @Test
-    fun `action flow emits state`() = runTest(testDispatcher) {
+    fun `action flow emits state`() = testScope.runTest {
         val action = TestAction.NewStateAction
         val newState = TestState(changed = true)
 
@@ -81,7 +80,7 @@ class ReducerTest {
     }
 
     @Test
-    fun `action flow emits side effect`() = runTest(testDispatcher) {
+    fun `action flow emits side effect`() = testScope.runTest {
         val action = TestAction.SideEffectAction
         val sideEffect = TestSideEffect
 
