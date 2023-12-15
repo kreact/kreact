@@ -54,6 +54,17 @@ dependecies {
 
 ### Maven
 ```xml
+<project ...>     
+    ...
+    <distributionManagement>
+    <repository>
+        <id>github</id>
+        <name>GitHub Packages</name>
+        <url>https://maven.pkg.github.com/kreact/kreact</url>
+    </repository>
+    </distributionManagement>
+</project>
+
 <dependency>
   <groupId>org.kreact</groupId>
   <artifactId>kreact</artifactId>
