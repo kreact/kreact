@@ -16,6 +16,7 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
+      - name: Test
       - run: chmod +x ./gradlew
       - uses: gradle/gradle-build-action@v2.11.0
         with:
