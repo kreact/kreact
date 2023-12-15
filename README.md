@@ -1,6 +1,23 @@
 # KReact
 [![Build and Test](https://github.com/kreact/kreact/actions/workflows/build-and-test.yml/badge.svg?branch=main)](https://github.com/kreact/kreact/actions/workflows/build-and-test.yml)
 
+KReact is a Kotlin-based framework designed for managing application state in a reactive and structured manner. 
+It employs a redux-like pattern, centralizing the state management logic. Key components of this library include:
+
+* `Action`: Represents discrete operations or events that trigger state changes.
+* `State`: The core of the application's data structure, which is immutable and reflects the current status of the 
+application.
+* `SideEffect`: Handles operations that are not directly related to the state mutation, such as logging or database 
+interactions, ensuring a clear separation of concerns.
+* `ActionDispatcher`: A conduit for dispatching actions either synchronously or asynchronously, facilitating state 
+mutations.
+* `Reducer`: The heart of the state mutation logic, where actions are processed to produce a new, immutable state.
+* `StateProvider`: Offers a reactive stream of state and side effects, enabling components to respond dynamically to 
+state changes.
+
+This architecture promotes a clean, maintainable, and scalable codebase, ideal for complex applications requiring a 
+structured approach to state management, while simplifying testing and improving the testing surface.
+
 ## Gradle
 ```kotlin
 dependecies {
@@ -16,9 +33,6 @@ dependecies {
   <version>1.0.0</version>
 </dependency>
 ```
-
-# Use 
-This library can be used in a variety of applications in both clients and servers that use Kotlin.
 
 ## Quick Start
 You are required to set up a set of components for any use case. These are:
