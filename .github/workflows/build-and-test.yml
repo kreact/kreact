@@ -16,4 +16,13 @@ jobs:
     
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2.11.0
-    - run: ./gradlew wrapper && ./gradlew build && ./gradlew test
+    - run: chmod +x ./gradlew
+
+    - name: Wrapper
+    - run: ./gradlew wrapper
+
+    - name: Build
+    - run: ./gradlew build
+
+    - name: Test
+    - run: ./gradlew test
