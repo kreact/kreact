@@ -1,4 +1,4 @@
 object JarMetadata {
-    val group = "org.kreact"
-    val version = "1.0"
+    const val GROUP = "org.kreact.core"
+    const val VERSION = "1.0"
 }

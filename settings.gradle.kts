@@ -1,3 +1,2 @@
-
-rootProject.name = "kreact-service"
+rootProject.name = "kreact"
 
