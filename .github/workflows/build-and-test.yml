@@ -7,13 +7,16 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    
-    - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2.11.0
-    - run: ./gradlew wrapper && ./gradlew build && ./gradlew test
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+      - run: chmod +x ./gradlew
+      - uses: gradle/gradle-build-action@v2.11.0
+        with:
+          arguments: test --scan
