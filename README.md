@@ -4,7 +4,7 @@
 ## Gradle
 ```kotlin
 dependecies {
-    implementation("org.kreact.kreact:1.0")
+    implementation("org.kreact.kreact:1.0.0")
 }
 ```
 
@@ -13,7 +13,7 @@ dependecies {
 <dependency>
   <groupId>org.kreact</groupId>
   <artifactId>kreact</artifactId>
-  <version>1.0</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
