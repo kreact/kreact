@@ -2,7 +2,7 @@
 [![Build and Test](https://github.com/kreact/kreact/actions/workflows/build-and-test.yml/badge.svg?branch=main)](https://github.com/kreact/kreact/actions/workflows/build-and-test.yml)
 
 KReact is a Kotlin-based framework designed for managing application state in a reactive and structured manner. 
-It employs a redux-like pattern, centralizing the state management logic. Key components of this library include:
+It employs a redux-like pattern, centralizing the state management logic. The key components of this library are:
 
 * `Action`: Represents discrete operations or events that trigger state changes.
 * `State`: The core of the application's data structure, which is immutable and reflects the current status of the 
@@ -17,6 +17,18 @@ state changes.
 
 This architecture promotes a clean, maintainable, and scalable codebase, ideal for complex applications requiring a 
 structured approach to state management, while simplifying testing and improving the testing surface.
+
+The design is based on these principles:
+1. Reactive
+2. Scalable
+3. Modular
+4. Minimal
+
+This framework can be used in a variety of applications both in clients and in servers. Servers are a particularly
+interesting use case especially with the rise of stateless services. All software has internal state one way or another
+whether it exists in the form of constants or database connections. KReact helps centralize the data so that you can
+focus on the logic and not worry about how to access things you need to process a request. See below for some concrete
+examples.
 
 ## Use
 ### Gradle
@@ -230,12 +242,12 @@ fun MainScreen() {
 To fully harness the power of coroutines use an HTTP server like Ktor that makes full use of coroutines. Other HTTP 
 servers may be viable but are not tested. The library can be used for both stateful and stateless services.
 
-#### Stateful Example
-I will not be providing a stateful example since it is trivial to set up and the General section above should send you
-on the right path. Just ensure that the created `ActionDispatcher` and `StateProvider` pair are accessible to your 
-service class during its lifecycle, including the coroutine scope needed by `StateProviderFactory`.
+#### Stateful
+I will not be providing a stateful example since it is trivial to set up and the `Quick Start` section above should
+provide a generalized example. Just ensure that the created `ActionDispatcher` and `StateProvider` pair are accessible 
+to your service class during its lifecycle, including the coroutine scope needed by `StateProviderFactory`.
 
-#### Stateless Example
+#### Stateless
 For the stateless example I will be using Ktor and utilize its `pipelineContext` to maintain structured concurrency.
 What we want is that for each call made to a URL or endpoint, we initialize a new state, therefore allowing any call 
 made to the service to utilize common state properties, condensing the data needed to process a request into a single 
