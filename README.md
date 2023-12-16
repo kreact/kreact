@@ -54,7 +54,7 @@ dependecies {
 
 ### Maven
 ```xml
-<project ...>     
+<project ...>
     ...
     <distributionManagement>
     <repository>
@@ -73,13 +73,12 @@ dependecies {
 ```
 
 ## Quick Start
-You are required to set up a set of components for any use case. These are:
-* Action: Represents an operation to change the state.
-* State: Represents the application state.
-* SideEffect: Represents a side effect operation after mutating the state like logging, database interactions etc.
-* ActionDispatcher: Dispatches actions to change the state.
-* Reducer: Processes actions to produce a new state.
-* StateProvider: Provides a flow of states and side effects.
+You need to define a set of components for any use case. These are:
+* `Action`: Represents an operation to change the state.
+* `State`: Represents the application state.
+* `Reducer Function`: Processes actions to produce a new state.
+* `SideEffect` (Optional): Represents a side effect operation after mutating the state like logging, database 
+interactions etc.
 
 The components can be as complex or as simple as you want them to be.
 
