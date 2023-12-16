@@ -80,7 +80,7 @@ You need to define a set of components for any use case. These are:
 * `SideEffect` (Optional): Represents a side effect operation after mutating the state like logging, database 
 interactions etc.
 
-The components can be as complex or as simple as you want them to be.
+The components can be as complex or as simple as you want them to be. The rest is created for you.
 
 Here is a simple example to get started quickly:
 
