@@ -82,10 +82,9 @@ interactions etc.
 
 The components can be as complex or as simple as you want them to be. The rest is created for you.
 
-Here is a simple example to get started quickly:
+Here is a simple step by step example to get started quickly:
 
-### Define your components
-#### Step 1: Define State, Actions & Side Effects
+### Step 1: Define State, Actions & Side Effects
 ```kotlin
 // Define your application state
 class AppState(val counter: Int = 0) : State
@@ -97,7 +96,7 @@ class DecrementAction : Action
 // Define any side effects (e.g., logging)
 class LogSideEffect(val message: String) : SideEffect
 ```
-#### Step 2: Define Reducer Functions
+### Step 2: Define Reducer Functions
 ```kotlin
 // Reducer function to handle actions
 val counterReducer: ReducerFunctionType<Action, AppState, SideEffect> = { action, state, dispatcher ->
@@ -108,7 +107,7 @@ val counterReducer: ReducerFunctionType<Action, AppState, SideEffect> = { action
     }
 }
 ```
-#### Step 3: Initialize State Management
+### Step 3: Initialize State Management
 Using the components we defined we can now create our `ActionDispatcher` and `StateProvider`
 ```kotlin
 // Coroutine scope for the reducer (usually a ViewModelScope or similar)
@@ -124,7 +123,7 @@ val (actionDispatcher, stateProvider) = StateProviderFactory.create(
     counterReducer
 )
 ```
-#### Step 4: Dispatch Actions and Observe State Changes
+### Step 4: Dispatch Actions and Observe State Changes
 ```kotlin
 // Dispatch actions
 scope.launch {
@@ -137,7 +136,7 @@ stateProvider.stateFlow.collect { state ->
     println("Current counter value: ${state.counter}")
 }
 ```
-#### Step 5: Observe Side Effects (Optional)
+### Step 5: Observe Side Effects (Optional)
 ```kotlin
 // Side effect example (e.g., logging)
 stateProvider.sideEffectFlow.collect { sideEffect ->
